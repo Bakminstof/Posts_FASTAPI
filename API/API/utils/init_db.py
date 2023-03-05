@@ -7,7 +7,7 @@ from .check_connect import check_connect
 from elastic.elastic_conf import node_config
 
 
-async def init_db(export_csv: bool = True) -> None:
+async def init_db(export_csv: bool = True) -> bool:
     time = 60
 
     while not await check_connect():
@@ -35,3 +35,7 @@ async def init_db(export_csv: bool = True) -> None:
 
                 except ConnectionTimeout:
                     await Post.reindex_elastic(async_session, es_client)
+
+            return True
+        else:
+            return False

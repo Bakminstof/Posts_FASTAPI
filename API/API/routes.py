@@ -16,10 +16,11 @@ from elastic.elastic_conf import node_config
 
 @app.on_event('startup')
 async def _startup():
-    await init_db()
+    check_init = await init_db()
 
-    async with AsyncElasticsearch(hosts=[node_config], request_timeout=20) as es_client:
-        await Post.reindex_elastic(async_session, es_client)
+    if not check_init:
+        async with AsyncElasticsearch(hosts=[node_config], request_timeout=20) as es_client:
+            await Post.reindex_elastic(async_session, es_client)
 
 
 @app.on_event('shutdown')
