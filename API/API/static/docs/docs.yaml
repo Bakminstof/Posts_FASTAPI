@@ -1,0 +1,165 @@
+openapi: 3.0.2
+info:
+  title: Posts API
+  version: 0.1.0
+paths:
+  /posts/search/{text}:
+    get:
+      summary: Search
+      operationId: search_posts_search__text__get
+      parameters:
+        - required: true
+          schema:
+            title: Text
+            type: string
+          name: text
+          in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DumpModel'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /posts/{post_id}/delete:
+    delete:
+      summary: Delete Post By Id
+      operationId: delete_post_by_id_posts__post_id__delete_delete
+      parameters:
+        - required: true
+          schema:
+            title: Post Id
+            type: integer
+          name: post_id
+          in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DumpModel'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '404':
+          description: Not found Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+components:
+  schemas:
+    DumpModel:
+      title: DumpModel
+      required:
+        - data
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ResultsModel'
+        meta:
+          title: Meta
+          anyOf:
+            - type: object
+            - type: string
+    HTTPValidationError:
+      title: HTTPValidationError
+      type: object
+      properties:
+        detail:
+          title: Detail
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    PostModel:
+      title: PostModel
+      required:
+        - id
+        - text
+        - created_date
+        - rubrics
+      type: object
+      properties:
+        id:
+          title: Id
+          type: integer
+        text:
+          title: Text
+          type: string
+        created_date:
+          title: Created Date
+          type: string
+          format: date-time
+        rubrics:
+          title: Rubrics
+          type: array
+          items: {}
+    ResultsModel:
+      title: ResultsModel
+      required:
+        - result
+      type: object
+      properties:
+        result:
+          title: Result
+          anyOf:
+            - type: array
+              items:
+                $ref: '#/components/schemas/PostModel'
+            - type: string
+    ErrorModel:
+      title: ErrorModel
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorItemModel'
+    ErrorItemModel:
+      title: ErrorItemModel
+      type: object
+      properties:
+        type:
+          title: Type
+          type: string
+        title:
+          title: Title
+          type: string
+        status:
+          title: Status
+          type: string
+        detail:
+          title: Detail
+          type: string
+        timestamp:
+          title: Timestamp
+          type: string
+    ValidationError:
+      title: ValidationError
+      required:
+        - loc
+        - msg
+        - type
+      type: object
+      properties:
+        loc:
+          title: Location
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string

@@ -1,0 +1,65 @@
+version: '3.1'
+
+services:
+  api:
+    container_name: ${API_CONTAINER_NAME}
+    restart: always
+    build:
+      context: API
+      dockerfile: Dockerfile
+    env_file:
+      - API/API/environment/dev.env
+    environment:
+      ENV_FILE_TYPE: ${ENV_FILE_TYPE}
+    ports:
+      - ${WEBAPP_PORT}:${WEBAPP_PORT}
+    networks:
+      - network
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: ${POSTGRES_CONTAINER_NAME}
+    restart: always
+    build:
+      context: postgresql
+      dockerfile: Dockerfile
+    env_file:
+      - API/API/environment/dev.env
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data/
+    networks:
+      - network
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    container_name: ${ELASTIC_CONTAINER_NAME}
+    restart: always
+    build:
+      context: elasticsearch/
+      dockerfile: Dockerfile
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - elastic_data_dev:/usr/share/elasticsearch/data
+    ports:
+      - ${ELASTIC_PORT}:${ELASTIC_PORT}
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTIC_PASSWORD: ${ELASTIC_PASS}
+      # Use single node discovery in order to disable production mode and avoid bootstrap checks.
+      # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      discovery.type: single-node
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
+
+volumes:
+  postgres_data_dev:
+  elastic_data_dev:

@@ -1,0 +1,11 @@
+CREATE ROLE api_user WITH LOGIN;
+ALTER USER api_user WITH PASSWORD 'DWAc6HKMPIBo0mj4n6ah0R0r#7!rwoHshzVuram9uYiqd3b1UnQc7g2mEBeN';
+
+CREATE DATABASE api_db;
+CREATE SCHEMA api_db_schema;
+
+GRANT ALL ON DATABASE api_db TO api_user;
+
+ALTER DATABASE api_db OWNER TO api_user;
+
+GRANT SELECT, UPDATE, INSERT ON ALL TABLES IN SCHEMA api_db_schema TO api_user;

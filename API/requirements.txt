@@ -1,0 +1,17 @@
+# app
+fastapi==0.92.0
+pydantic[dotenv]==1.10.5
+uvicorn==0.20.0
+
+# db
+SQLAlchemy[asyncio]==2.0.4
+pyscopg2==66.0.2
+asyncpg==0.27.0
+
+elasticsearch[async]==8.6.2
+
+# dev
+pytest==7.2.2
+pytest-asyncio==0.20.3
+httpx[http2]==0.23.3
+asgi-lifespan==2.0.0
